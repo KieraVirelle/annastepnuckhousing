@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Annastepnuk Housing | Small Venue Build</title>
+  <meta name="description" content="Small venue build gallery for Annastepnuk Housing.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="index.html"><span class="brand-mark">Annastepnuk Housing</span><span class="brand-sub">FFXIV Interior Design</span></a><nav class="nav-tabs" aria-label="Main"><a class="nav-tab" href="index.html">Home</a><a class="nav-tab active" href="gallery.html">Gallery</a><a class="nav-tab" href="services.html">Services</a><a class="nav-tab" href="process.html">Process</a><a class="nav-tab" href="auction.html">Auction</a><a class="nav-tab" href="contact.html">Contact</a></nav></div></header>
+  <main class="page site-shell">
+    <section class="gallery-section gallery-page" data-small-venue-detail>
+      <div class="gallery-hero">
+        <div class="gallery-intro"><p class="section-kicker">Venue Gallery</p><h1 class="gallery-landing-title" data-small-venue-title>Small Venue Build</h1><p class="lead" data-small-venue-lead>Small venue build gallery.</p></div>
+        <div class="gallery-price-panel"><p class="gallery-price-kicker">Small venue build</p><div class="gallery-price-list"><p><strong>Starting price</strong><span>25m gil</span></p><p><strong>Category</strong><span data-small-venue-category>Venue Collection</span></p><p><strong>Build</strong><span data-small-venue-build-name>Small Venue Build</span></p></div><p class="gallery-price-note">These builds are presented in their own collection so they stay separate from the larger venue portfolios.</p></div>
+      </div>
+      <section class="venue-gallery-showcase">
+        <article class="stack-showcase panel" data-stack-showcase>
+          <div class="stack-copy"><p class="gallery-label">Featured Build</p><h2 class="gallery-title" data-small-venue-build-name>Small Venue Build</h2><p class="body-copy">This build is part of the small venue collection.</p><div class="stack-details"><p><strong>Starting price</strong><span>25 million gil</span></p><p><strong>Category</strong><span data-small-venue-build-type>Small venue build</span></p><p><strong>Style note</strong><span>Part of the ordered small venue collection</span></p></div><p class="stack-note" data-small-venue-note>Flip through the gallery to view the full build.</p><p class="stack-counter"><span data-stack-current>1</span> / <span data-stack-total data-small-venue-total-images>1</span></p></div>
+          <div class="stack-stage"><button class="stack-nav stack-nav-prev" type="button" data-stack-prev aria-label="Previous image">&larr;</button><div class="stack-frame"><div class="stack-layer stack-layer-back"></div><div class="stack-layer stack-layer-mid"></div><button class="gallery-tile stack-main" type="button" data-gallery-image data-stack-open><img class="gallery-image stack-main-image" src="" alt=""><span class="gallery-tile-caption">Open full view</span></button></div><button class="stack-nav stack-nav-next" type="button" data-stack-next aria-label="Next image">&rarr;</button></div>
+          <div class="stack-thumbs" data-stack-thumbs></div>
+        </article>
+      </section>
+      <nav class="gallery-pager panel" aria-label="Small venue galleries"><a class="gallery-pager-link" href="gallery.html" data-small-venue-prev><span class="gallery-pager-label">Back</span><strong>Small Venue Collection</strong></a><a class="gallery-pager-link gallery-pager-link-next" href="gallery.html" data-small-venue-next><span class="gallery-pager-label">Back</span><strong>Small Venue Collection</strong></a></nav>
+    </section>
+  </main>
+  <footer class="footer site-shell"><div class="footer-card"><p class="footer-copy">Need the payment structure and design process behind these builds?</p><a class="button-soft" href="process.html">Open Process</a></div></footer>
+  <div class="lightbox" data-lightbox hidden><div class="lightbox-backdrop" data-lightbox-close></div><div class="lightbox-dialog" role="dialog" aria-modal="true" aria-label="Expanded gallery image"><button class="lightbox-close" type="button" aria-label="Close image" data-lightbox-close>&times;</button><img class="lightbox-image" src="" alt=""></div></div>
+  <script src="venue-small-builds-data.js"></script>
+  <script src="venue-small-void-builds-data.js"></script>
+  <script>
+    const category = new URLSearchParams(window.location.search).get('category');
+    const configs = {
+      'venue-small-homes': { slug: 'venue-small-homes', collectionLabel: 'Venue - Small Homes', buildType: 'Small venue home', landingPage: 'venue-small-homes.html', builds: window.venueSmallBuildsData || [] },
+      'venue-small-void-builds': { slug: 'venue-small-void-builds', collectionLabel: 'Venue - Small Void Builds', buildType: 'Small venue void build', landingPage: 'venue-small-void-builds.html', builds: window.venueSmallVoidBuildsData || [] }
+    };
+    window.smallVenueGalleryConfig = configs[category] || configs['venue-small-homes'];
+    document.querySelectorAll('[data-small-venue-category]').forEach((node) => { node.textContent = window.smallVenueGalleryConfig.collectionLabel; });
+  </script>
+  <script src="venue-small-gallery.js"></script>
+  <script src="gallery-showcase.js"></script>
+</body>
+</html>
