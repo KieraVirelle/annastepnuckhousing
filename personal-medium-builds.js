@@ -16,7 +16,7 @@ const renderPersonalMediumLanding = () => {
           <h2 class="gallery-title">${build.title}</h2>
           <p class="body-copy">${build.title} is part of the personal medium home collection. Open the dedicated page to flip through the uploaded screenshots in sequence.</p>
           <div class="build-entry-meta">
-            <p><strong>Starting price</strong><span>35m gil</span></p>
+            <p><strong>Starting price</strong><span>50m gil</span></p>
             <p><strong>Build type</strong><span>Medium personal home</span></p>
             <p><strong>Images</strong><span>${build.images.length} views</span></p>
           </div>

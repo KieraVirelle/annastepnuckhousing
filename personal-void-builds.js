@@ -34,7 +34,7 @@ const renderPersonalVoidLanding = () => {
             <h2 class="gallery-title">${build.title}</h2>
             <p class="body-copy">${build.title} is part of the large personal void build collection. Open the dedicated page to flip through the uploaded screenshots in sequence.</p>
             <div class="build-entry-meta">
-              <p><strong>Starting price</strong><span>50m gil</span></p>
+              <p><strong>Starting price</strong><span>75m gil</span></p>
               <p><strong>Build type</strong><span>Large personal void build</span></p>
               <p><strong>Images</strong><span>${build.count} views</span></p>
             </div>

@@ -25,7 +25,7 @@ const featuredBuildSets = [
   {
     key: 'small',
     label: 'Small Home',
-    price: '25m gil',
+    price: '35m gil',
     type: 'Personal home',
     href: 'personal-small-build.html?build=',
     items: Array.isArray(window.personalSmallBuildsData) ? window.personalSmallBuildsData : []
@@ -33,7 +33,7 @@ const featuredBuildSets = [
   {
     key: 'medium',
     label: 'Medium Home',
-    price: '35m gil',
+    price: '50m gil',
     type: 'Personal home',
     href: 'personal-medium-build.html?build=',
     items: Array.isArray(window.personalMediumBuildsData) ? window.personalMediumBuildsData : []
@@ -41,7 +41,7 @@ const featuredBuildSets = [
   {
     key: 'large',
     label: 'Large Home',
-    price: '50m gil',
+    price: '75m gil',
     type: 'Personal home',
     href: 'personal-large-build.html?build=',
     items: homepageLargeBuilds
