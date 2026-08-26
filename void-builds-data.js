@@ -13,7 +13,7 @@ window.voidBuildsData = [
     count: 9,
     directory: 'Images/Venue Large Void Builds Dreamscape Venue/',
     prefix: '(L) Dreamscape Venue (',
-    suffix: ').PNG',
+    suffix: ').png',
     video: 'Images/Venue Large Void Builds Dreamscape Venue/(L) Dreamscape Venue.mp4'
   },
   {
