@@ -11,9 +11,10 @@ window.voidBuildsData = [
     slug: 'dreamscape-venue',
     title: 'Dreamscape Venue',
     count: 9,
-    directory: 'Images/2 - Dreamscape Venue-20260414T072139Z-3-001/2 - Dreamscape Venue/',
-    prefix: '(L) - Dreamscape Venue (',
-    suffix: ').PNG'
+    directory: 'Images/Venue Large Void Builds Dreamscape Venue/',
+    prefix: '(L) Dreamscape Venue (',
+    suffix: ').PNG',
+    video: 'Images/Venue Large Void Builds Dreamscape Venue/(L) Dreamscape Venue.mp4'
   },
   {
     slug: 'spirited-away-venue',
@@ -130,9 +131,54 @@ window.voidBuildsData = [
   {
     slug: 'pink-club-aurora',
     title: 'Pink Club Aurora',
-    count: 7,
-    directory: 'Images/17 - Pink Club Aurora-20260414T072211Z-3-001/17 - Pink Club Aurora/',
-    prefix: '(L) Pink Club Aurora (',
+    count: 10,
+    directory: 'Images/Venue Large Void Build - PInk Club Aurora Update Design/',
+    prefix: '(L) - Pink Club Aurora Update (',
     suffix: ').PNG'
+  },
+  {
+    slug: 'purple-stone-glow-venue',
+    title: 'Purple Stone Glow Venue',
+    count: 11,
+    directory: 'Images/Venue Large Void Builds Purple Stone Glow Venue/',
+    prefix: '(L) Purple Stone Glow Venue (',
+    suffix: ').png',
+    video: 'Images/Venue Large Void Builds Purple Stone Glow Venue/(L) Purple Stone Glow Venue.mp4'
+  },
+  {
+    slug: 'purple-diamond-void-venue',
+    title: 'Purple Diamond Void Venue',
+    count: 8,
+    directory: 'Images/Venue Large Void Builds - Purple Diamond Void Venue/',
+    prefix: 'Purple Diamond Void (',
+    suffix: ').png'
+  },
+  {
+    slug: 'red-diamond-void-venue',
+    title: 'Red Diamond Void Venue',
+    count: 11,
+    directory: 'Images/Red Diamond Void Venue/',
+    prefix: '(L) - Red Diamond Void Venue (',
+    suffix: ').png'
+  },
+  {
+    slug: 'otters-venue',
+    title: 'Otters Venue',
+    images: [
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (1).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (2).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (3).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (3) (1).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (4).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (5).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (6).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (7).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (8).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (9).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (10).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (11).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (12).png',
+      'Images/Otters Venue Large Venue Void Builds/(L) Otters Venue II (13).png'
+    ]
   }
 ];

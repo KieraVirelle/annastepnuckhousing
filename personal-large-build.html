@@ -40,7 +40,7 @@
     <div class="lightbox-backdrop" data-lightbox-close></div>
     <div class="lightbox-dialog" role="dialog" aria-modal="true" aria-label="Expanded gallery image">
       <button class="lightbox-close" type="button" aria-label="Close image" data-lightbox-close>&times;</button>
-      <img class="lightbox-image" src="" alt="">
+      <div class="lightbox-media" data-lightbox-media></div>
     </div>
   </div>
   <script src="personal-large-builds.js"></script>
@@ -58,10 +58,11 @@
       document.title = 'Annastepnuk Housing | ' + build.title;
       const prevBuild = builds[buildIndex - 1];
       const nextBuild = builds[buildIndex + 1];
-      const thumbs = build.images.map((src, index) => {
+      const mediaItems = getPersonalLargeMediaItems(build);
+      const firstMedia = mediaItems[0];
+      const thumbs = mediaItems.map((item, index) => {
         const active = index === 0 ? ' active' : '';
-        const alt = build.title + ' large personal home image ' + (index + 1) + '.';
-        return '<button class="stack-thumb' + active + '" type="button" data-stack-thumb data-image-src="' + src + '" data-image-alt="' + alt + '"><img class="gallery-image" src="' + src + '" alt=""></button>';
+        return '<button class="stack-thumb' + active + '" type="button" data-stack-thumb data-media-type="' + item.type + '" data-media-src="' + encodePersonalLargePath(item.src) + '" data-media-alt="' + item.alt + '" data-image-src="' + encodePersonalLargePath(item.src) + '" data-image-alt="' + item.alt + '">' + renderPersonalLargeMedia(item) + '</button>';
       }).join('');
       const prevLink = prevBuild
         ? '<a class="gallery-pager-link" href="personal-large-build.html?build=' + prevBuild.slug + '"><span class="gallery-pager-label">Previous Build</span><strong>' + prevBuild.title + '</strong></a>'
@@ -99,8 +100,8 @@
                   '<p><strong>Category</strong><span>Large Personal Home</span></p>' +
                   '<p><strong>Style note</strong><span>' + build.style + '</span></p>' +
                 '</div>' +
-                '<p class="stack-note">Thank you for touring the design. Open the full image view at any point for a closer look.</p>' +
-                '<p class="stack-counter"><span data-stack-current>1</span> / <span data-stack-total>' + build.images.length + '</span></p>' +
+                '<p class="stack-note">Thank you for touring the design. Open the full view at any point for a closer look.</p>' +
+                '<p class="stack-counter"><span data-stack-current>1</span> / <span data-stack-total>' + mediaItems.length + '</span></p>' +
               '</div>' +
               '<div class="stack-stage">' +
                 '<button class="stack-nav stack-nav-prev" type="button" data-stack-prev aria-label="Previous image">&larr;</button>' +
@@ -108,8 +109,8 @@
                   '<div class="stack-layer stack-layer-back"></div>' +
                   '<div class="stack-layer stack-layer-mid"></div>' +
                   '<button class="gallery-tile stack-main" type="button" data-gallery-image data-stack-open>' +
-                    '<img class="gallery-image stack-main-image" src="' + build.images[0] + '" alt="' + build.title + ' large personal home featured interior view.">' +
-                    '<span class="gallery-tile-caption">Open full view</span>' +
+                    '<div class="stack-main-media" data-stack-media>' + (firstMedia ? renderPersonalLargeMedia(firstMedia) : '') + '</div>' +
+                    '<span class="gallery-tile-caption">' + (firstMedia && firstMedia.type === "video" ? 'Play full view' : 'Open full view') + '</span>' +
                   '</button>' +
                 '</div>' +
                 '<button class="stack-nav stack-nav-next" type="button" data-stack-next aria-label="Next image">&rarr;</button>' +

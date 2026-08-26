@@ -38,5 +38,13 @@ window.personalVoidBuildsData = [
     directory: 'Images/Large%20Personal%20Voids/5%20-%20Frost%20Cabin/',
     prefix: '(L)%20Frost%20Cabin%20(',
     suffix: ').png'
+  },
+  {
+    slug: 'cosmic-paradise',
+    title: 'Cosmic Paradise',
+    count: 11,
+    directory: 'Images/Personal%20Large%20Void%20Build%20-%20Cosmic%20Paradise/',
+    prefix: '(L)%20Cosmic%20Paradise%20(',
+    suffix: ').png'
   }
 ];

@@ -2,9 +2,11 @@ const getVoidBuilds = () => {
   const source = Array.isArray(window.voidBuildsData) ? window.voidBuildsData : [];
 
   return source.map((build, index) => {
-    const images = Array.from({ length: build.count }, (_, imageIndex) =>
-      `${build.directory}${build.prefix}${imageIndex + 1}${build.suffix}`
-    );
+    const images = Array.isArray(build.images) && build.images.length
+      ? build.images
+      : Array.from({ length: build.count }, (_, imageIndex) =>
+          `${build.directory}${build.prefix}${imageIndex + 1}${build.suffix}`
+        );
 
     return {
       ...build,
@@ -16,6 +18,33 @@ const getVoidBuilds = () => {
 
 const encodeImagePath = (path) => encodeURI(path).replace(/#/g, '%23');
 
+const getVoidMediaItems = (build) => {
+  const images = Array.isArray(build.images) ? build.images : [];
+  const media = images.map((src, index) => ({
+    type: 'image',
+    src,
+    alt: `${build.title} large venue void build image ${index + 1}.`
+  }));
+
+  if (build.video) {
+    media.push({
+      type: 'video',
+      src: build.video,
+      alt: `${build.title} large venue void build video tour.`
+    });
+  }
+
+  return media;
+};
+
+const renderVoidMedia = (item) => {
+  const src = encodeImagePath(item.src);
+  if (item.type === 'video') {
+    return `<video class="gallery-image" src="${src}" muted playsinline loop preload="metadata" aria-label="${item.alt}"></video>`;
+  }
+  return `<img class="gallery-image" src="${src}" alt="${item.alt}">`;
+};
+
 const renderVoidLanding = () => {
   const list = document.querySelector('[data-void-build-list]');
   const total = document.querySelector('[data-void-total]');
@@ -26,9 +55,13 @@ const renderVoidLanding = () => {
 
   list.innerHTML = builds
     .map((build) => {
+      const mediaItems = getVoidMediaItems(build);
       const previewImages = build.images.slice(0, Math.min(build.images.length, 5)).map(encodeImagePath);
       const previewSrc = previewImages[0];
       const previewData = previewImages.join('|');
+      const mediaLabel = build.video ? 'Media' : 'Images';
+      const mediaValue = build.video ? mediaItems.length : build.images.length;
+      const mediaSuffix = build.video ? 'items' : 'views';
 
       return `
         <article class="build-entry panel">
@@ -38,7 +71,7 @@ const renderVoidLanding = () => {
             <div class="build-entry-meta">
               <p><strong>Starting price</strong><span>75m gil</span></p>
               <p><strong>Build type</strong><span>Large venue void build</span></p>
-              <p><strong>Images</strong><span>${build.count} views</span></p>
+              <p><strong>${mediaLabel}</strong><span>${mediaValue} ${mediaSuffix}</span></p>
             </div>
             <div class="hero-actions">
               <a class="button" href="venue-large-void-build.html?build=${build.slug}">Open ${build.title}</a>
@@ -75,6 +108,8 @@ const renderVoidDetail = () => {
 
   const previousBuild = builds[index - 1] || null;
   const nextBuild = builds[index + 1] || null;
+  const mediaItems = getVoidMediaItems(build);
+  const firstMedia = mediaItems[0];
 
   document.title = `Annastepnuk Housing | ${build.title}`;
 
@@ -93,36 +128,38 @@ const renderVoidDetail = () => {
   const thumbs = detailRoot.querySelector('[data-stack-thumbs]');
   const prevLink = detailRoot.querySelector('[data-void-prev]');
   const nextLink = detailRoot.querySelector('[data-void-next]');
-
-  const encodedImages = build.images.map(encodeImagePath);
-  const firstImage = encodedImages[0];
+  const stageCaption = detailRoot.querySelector('.gallery-tile-caption');
 
   if (title) title.textContent = build.title;
   if (buildName) buildName.textContent = build.title;
   if (lead) lead.textContent = `${build.title} is part of the large venue void build collection, kept separate from the standard venue portfolio so visitors can browse this style on its own.`;
-  if (note) note.textContent = `Thank you for touring the design. Flip through the gallery to follow how ${build.title} unfolds through the void-build layout one image at a time.`;
-  if (total) total.textContent = String(build.count);
+  if (note) note.textContent = `Thank you for touring the design. Flip through the gallery to follow how ${build.title} unfolds through the void-build layout one frame at a time.`;
+  if (total) total.textContent = String(mediaItems.length);
 
-  if (stageImage) {
-    stageImage.src = firstImage;
+  if (stageImage && firstMedia) {
+    stageImage.src = encodeImagePath(firstMedia.src);
     stageImage.alt = `${build.title} large venue void build featured interior view.`;
   }
 
-  if (stageButton) {
-    stageButton.dataset.imageSrc = firstImage;
-    stageButton.dataset.imageAlt = `${build.title} large venue void build featured interior view.`;
+  if (stageButton && firstMedia) {
+    const encoded = encodeImagePath(firstMedia.src);
+    stageButton.dataset.mediaType = firstMedia.type;
+    stageButton.dataset.mediaSrc = encoded;
+    stageButton.dataset.mediaAlt = firstMedia.alt;
+    stageButton.dataset.imageSrc = encoded;
+    stageButton.dataset.imageAlt = firstMedia.alt;
+    if (stageCaption) {
+      stageCaption.textContent = firstMedia.type === 'video' ? 'Play full view' : 'Open full view';
+    }
   }
 
   if (thumbs) {
-    thumbs.innerHTML = encodedImages
-      .map((image, thumbIndex) => {
-        const alt = thumbIndex === build.count - 1
-          ? `${build.title} large venue void build closing showcase angle.`
-          : `${build.title} large venue void build image ${thumbIndex + 1}.`;
-
+    thumbs.innerHTML = mediaItems
+      .map((item, thumbIndex) => {
+        const encoded = encodeImagePath(item.src);
         return `
-          <button class="stack-thumb${thumbIndex === 0 ? ' active' : ''}" type="button" data-stack-thumb data-image-src="${image}" data-image-alt="${alt}">
-            <img class="gallery-image" src="${image}" alt="">
+          <button class="stack-thumb${thumbIndex === 0 ? ' active' : ''}" type="button" data-stack-thumb data-media-type="${item.type}" data-media-src="${encoded}" data-media-alt="${item.alt}" data-image-src="${encoded}" data-image-alt="${item.alt}">
+            ${renderVoidMedia(item)}
           </button>
         `;
       })

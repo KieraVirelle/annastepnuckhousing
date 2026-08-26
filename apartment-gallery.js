@@ -6,6 +6,45 @@ const getApartmentConfig = () => {
   return { ...config, builds };
 };
 
+const getApartmentMediaItems = (build) => {
+  const images = Array.isArray(build.images) ? build.images : [];
+  const media = images.map((src, index) => ({
+    type: 'image',
+    src,
+    alt: `${build.title} apartment image ${index + 1}.`
+  }));
+
+  if (build.video) {
+    media.push({
+      type: 'video',
+      src: build.video,
+      alt: `${build.title} apartment video tour.`
+    });
+  }
+
+  return media;
+};
+
+const getPreviewImageSources = (mediaItems) => mediaItems
+  .filter((item) => item.type === 'image')
+  .slice(0, 5)
+  .map((item) => encodeApartmentImagePath(item.src));
+
+const renderApartmentMediaMarkup = (item, { thumb = false } = {}) => {
+  const src = encodeApartmentImagePath(item.src);
+  const alt = item.alt || '';
+  const baseClass = thumb ? 'stack-thumb-media' : 'stack-main-media-content';
+
+  if (item.type === 'video') {
+    const videoAttrs = thumb
+      ? 'muted playsinline loop preload="metadata"'
+      : 'muted playsinline loop preload="metadata"';
+    return `<video class="gallery-image ${baseClass}" src="${src}" ${videoAttrs} aria-label="${alt}"></video>`;
+  }
+
+  return `<img class="gallery-image ${baseClass}" src="${src}" alt="${alt}">`;
+};
+
 const renderApartmentLanding = () => {
   const root = document.querySelector('[data-apartment-build-list]');
   if (!root) return;
@@ -26,16 +65,20 @@ const renderApartmentLanding = () => {
   }
 
   root.innerHTML = config.builds.map((build) => {
-    const previewImages = build.images.slice(0, Math.min(build.images.length, 5)).map(encodeApartmentImagePath);
+    const mediaItems = getApartmentMediaItems(build);
+    const previewImages = getPreviewImageSources(mediaItems);
+    const mediaCount = mediaItems.length;
+    const previewSource = previewImages[0] || (mediaItems[0] ? encodeApartmentImagePath(mediaItems[0].src) : '');
+
     return `
       <article class="build-entry panel">
         <div class="build-entry-copy">
           <h2 class="gallery-title">${build.title}</h2>
-          <p class="body-copy">${build.title} is part of the ${config.collectionLabel.toLowerCase()} collection. Open the dedicated page to flip through the uploaded screenshots in sequence.</p>
+          <p class="body-copy">${build.title} is part of the ${config.collectionLabel.toLowerCase()} collection. Open the dedicated page to flip through the uploaded photos and video in sequence.</p>
           <div class="build-entry-meta">
             <p><strong>Starting price</strong><span>20m gil</span></p>
             <p><strong>Build type</strong><span>${config.buildType}</span></p>
-            <p><strong>Images</strong><span>${build.images.length} views</span></p>
+            <p><strong>Media</strong><span>${mediaCount} items</span></p>
           </div>
           <div class="hero-actions">
             <a class="button" href="apartment-build.html?category=${config.slug}&build=${build.slug}">Open ${build.title}</a>
@@ -47,7 +90,7 @@ const renderApartmentLanding = () => {
             <div class="preview-card preview-card-mid"></div>
             <div class="preview-card preview-card-front">
               <div class="preview-rotator" data-rotate-gallery data-rotate-interval="2600" data-images="${previewImages.join('|')}">
-                <img class="gallery-image" src="${previewImages[0]}" alt="${build.title} rotating preview.">
+                ${previewSource ? `<img class="gallery-image" src="${previewSource}" alt="${build.title} rotating preview.">` : ''}
               </div>
             </div>
           </div>
@@ -70,7 +113,8 @@ const renderApartmentDetail = () => {
   const build = index >= 0 ? config.builds[index] : config.builds[0];
   const prevBuild = config.builds[index - 1] || null;
   const nextBuild = config.builds[index + 1] || null;
-  const encodedImages = build.images.map(encodeApartmentImagePath);
+  const mediaItems = getApartmentMediaItems(build);
+  const firstMedia = mediaItems[0] || null;
 
   document.title = `Annastepnuk Housing | ${build.title}`;
   const description = document.querySelector('meta[name="description"]');
@@ -88,30 +132,34 @@ const renderApartmentDetail = () => {
   setText('[data-apartment-build-name]', build.title);
   setText('[data-apartment-category]', config.collectionLabel);
   setText('[data-apartment-build-type]', config.buildType);
-  setText('[data-apartment-total-images]', String(build.images.length));
+  setText('[data-apartment-total-images]', String(mediaItems.length));
 
   const lead = root.querySelector('[data-apartment-lead]');
-  if (lead) lead.textContent = `${build.title} is part of the ${config.collectionLabel.toLowerCase()} collection and keeps the uploaded screenshots in their intended order.`;
+  if (lead) lead.textContent = `${build.title} is part of the ${config.collectionLabel.toLowerCase()} collection and keeps the photos and video in their intended order.`;
 
   const note = root.querySelector('[data-apartment-note]');
-  if (note) note.textContent = `Thank you for touring the design. Flip through the gallery to follow ${build.title} one image at a time.`;
+  if (note) note.textContent = `Thank you for touring the design. Flip through the gallery to follow ${build.title} one frame at a time.`;
 
-  const stageImage = root.querySelector('.stack-main-image');
+  const stageMedia = root.querySelector('[data-stack-media]');
   const stageButton = root.querySelector('[data-stack-open]');
-  if (stageImage) {
-    stageImage.src = encodedImages[0];
-    stageImage.alt = `${build.title} apartment featured interior view.`;
+  const stageCaption = root.querySelector('.gallery-tile-caption');
+  if (stageMedia && firstMedia) {
+    stageMedia.innerHTML = renderApartmentMediaMarkup(firstMedia);
   }
-  if (stageButton) {
-    stageButton.dataset.imageSrc = encodedImages[0];
-    stageButton.dataset.imageAlt = `${build.title} apartment featured interior view.`;
+  if (stageButton && firstMedia) {
+    stageButton.dataset.mediaType = firstMedia.type;
+    stageButton.dataset.mediaSrc = encodeApartmentImagePath(firstMedia.src);
+    stageButton.dataset.mediaAlt = firstMedia.alt;
+    if (stageCaption) {
+      stageCaption.textContent = firstMedia.type === 'video' ? 'Play full view' : 'Open full view';
+    }
   }
 
   const thumbs = root.querySelector('[data-stack-thumbs]');
   if (thumbs) {
-    thumbs.innerHTML = encodedImages.map((src, thumbIndex) => `
-      <button class="stack-thumb${thumbIndex === 0 ? ' active' : ''}" type="button" data-stack-thumb data-image-src="${src}" data-image-alt="${build.title} apartment image ${thumbIndex + 1}.">
-        <img class="gallery-image" src="${src}" alt="">
+    thumbs.innerHTML = mediaItems.map((item, thumbIndex) => `
+      <button class="stack-thumb${thumbIndex === 0 ? ' active' : ''}" type="button" data-stack-thumb data-media-type="${item.type}" data-media-src="${encodeApartmentImagePath(item.src)}" data-media-alt="${item.alt}" aria-label="${item.type === 'video' ? `${build.title} video tour` : `${build.title} image ${thumbIndex + 1}`}">
+        ${renderApartmentMediaMarkup(item, { thumb: true })}
       </button>
     `).join('');
   }

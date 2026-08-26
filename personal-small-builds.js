@@ -1,3 +1,34 @@
+const encodePersonalSmallPath = (path) => encodeURI(path).replace(/#/g, '%23');
+
+const getPersonalSmallMediaItems = (build) => {
+  const images = Array.isArray(build.images) ? build.images : [];
+  const media = images.map((src, index) => ({
+    type: 'image',
+    src,
+    alt: `${build.title} small personal home image ${index + 1}.`
+  }));
+
+  if (build.video) {
+    media.push({
+      type: 'video',
+      src: build.video,
+      alt: `${build.title} small personal home video tour.`
+    });
+  }
+
+  return media;
+};
+
+const renderPersonalSmallMedia = (item) => {
+  const src = encodePersonalSmallPath(item.src);
+
+  if (item.type === 'video') {
+    return `<video class="gallery-image" src="${src}" muted playsinline loop preload="metadata" aria-label="${item.alt}"></video>`;
+  }
+
+  return `<img class="gallery-image" src="${src}" alt="${item.alt}">`;
+};
+
 const renderPersonalSmallLanding = () => {
   const list = document.querySelector('[data-small-build-list]');
   const total = document.querySelector('[data-small-total]');
@@ -7,7 +38,12 @@ const renderPersonalSmallLanding = () => {
   if (total) total.textContent = String(builds.length);
 
   list.innerHTML = builds.map((build) => {
-    const previewImages = build.images.slice(0, Math.min(build.images.length, 5)).map((src) => encodeURI(src).replace(/#/g, '%23'));
+    const mediaItems = getPersonalSmallMediaItems(build);
+    const previewImages = build.images.slice(0, Math.min(build.images.length, 5)).map(encodePersonalSmallPath);
+    const mediaCountLabel = build.video ? 'Media' : 'Images';
+    const mediaCountValue = build.video ? mediaItems.length : build.images.length;
+    const mediaCountSuffix = build.video ? 'items' : 'views';
+
     return `
       <article class="build-entry panel">
         <div class="build-entry-copy">
@@ -16,7 +52,7 @@ const renderPersonalSmallLanding = () => {
           <div class="build-entry-meta">
             <p><strong>Starting price</strong><span>35m gil</span></p>
             <p><strong>Build type</strong><span>Small personal home</span></p>
-            <p><strong>Images</strong><span>${build.images.length} views</span></p>
+            <p><strong>${mediaCountLabel}</strong><span>${mediaCountValue} ${mediaCountSuffix}</span></p>
           </div>
           <div class="hero-actions">
             <a class="button" href="personal-small-build.html?build=${build.slug}">Open ${build.title}</a>
@@ -51,7 +87,8 @@ const renderPersonalSmallDetail = () => {
 
   const prevBuild = builds[index - 1] || null;
   const nextBuild = builds[index + 1] || null;
-  const images = build.images.map((src) => encodeURI(src).replace(/#/g, '%23'));
+  const mediaItems = getPersonalSmallMediaItems(build);
+  const firstMedia = mediaItems[0];
 
   document.title = `Annastepnuk Housing | ${build.title}`;
   const description = document.querySelector('meta[name="description"]');
@@ -63,28 +100,35 @@ const renderPersonalSmallDetail = () => {
     node.textContent = build.title;
   });
   const lead = root.querySelector('[data-small-lead]');
-  if (lead) lead.textContent = `${build.title} is part of the personal small home collection and keeps the uploaded screenshots in their intended order.`;
+  if (lead) lead.textContent = `${build.title} is part of the personal small home collection and keeps the uploaded photos and video in their intended order.`;
   const note = root.querySelector('[data-small-note]');
-  if (note) note.textContent = `Thank you for touring the design. Flip through the gallery to follow ${build.title} one image at a time.`;
+  if (note) note.textContent = `Thank you for touring the design. Flip through the gallery to follow ${build.title} one frame at a time.`;
   const total = root.querySelector('[data-small-total-images]');
-  if (total) total.textContent = String(images.length);
+  if (total) total.textContent = String(mediaItems.length);
 
   const stageImage = root.querySelector('.stack-main-image');
   const stageButton = root.querySelector('[data-stack-open]');
-  if (stageImage) {
-    stageImage.src = images[0];
+  const stageCaption = root.querySelector('.gallery-tile-caption');
+  if (stageImage && firstMedia) {
+    stageImage.src = encodePersonalSmallPath(firstMedia.src);
     stageImage.alt = `${build.title} small personal home featured interior view.`;
   }
-  if (stageButton) {
-    stageButton.dataset.imageSrc = images[0];
-    stageButton.dataset.imageAlt = `${build.title} small personal home featured interior view.`;
+  if (stageButton && firstMedia) {
+    stageButton.dataset.mediaType = firstMedia.type;
+    stageButton.dataset.mediaSrc = encodePersonalSmallPath(firstMedia.src);
+    stageButton.dataset.mediaAlt = firstMedia.alt;
+    stageButton.dataset.imageSrc = encodePersonalSmallPath(firstMedia.src);
+    stageButton.dataset.imageAlt = firstMedia.alt;
+    if (stageCaption) {
+      stageCaption.textContent = firstMedia.type === 'video' ? 'Play full view' : 'Open full view';
+    }
   }
 
   const thumbs = root.querySelector('[data-stack-thumbs]');
   if (thumbs) {
-    thumbs.innerHTML = images.map((src, i) => `
-      <button class="stack-thumb${i === 0 ? ' active' : ''}" type="button" data-stack-thumb data-image-src="${src}" data-image-alt="${build.title} small personal home image ${i + 1}.">
-        <img class="gallery-image" src="${src}" alt="">
+    thumbs.innerHTML = mediaItems.map((item, i) => `
+      <button class="stack-thumb${i === 0 ? ' active' : ''}" type="button" data-stack-thumb data-media-type="${item.type}" data-media-src="${encodePersonalSmallPath(item.src)}" data-media-alt="${item.alt}" data-image-src="${encodePersonalSmallPath(item.src)}" data-image-alt="${item.alt}">
+        ${renderPersonalSmallMedia(item)}
       </button>
     `).join('');
   }
